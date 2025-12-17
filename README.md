@@ -1,4 +1,4 @@
-# IoT Smart Gateway (ESP32 + MQTT + Python + Node-RED)
+# IoT Smart System (ESP32 + C++ + MQTT + Python + Node-RED)
 
 A personal smart home system built with ESP32 nodes, an MQTT broker, a Python API backend, and Node-RED for orchestration and control.
 
@@ -25,3 +25,4 @@ ESP32 → MQTT → Python API / Node-RED → Dashboard & Control
 ## Status
 
 In progress.
+
