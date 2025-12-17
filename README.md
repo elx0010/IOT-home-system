@@ -21,8 +21,6 @@ ESP32 → MQTT → Python API / Node-RED → Dashboard & Control
 - Node-RED
 - Python (FastAPI)
 - GitHub
+- C++
 
-## Status
-
-In progress.
 
