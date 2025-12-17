@@ -2,17 +2,18 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import threading
 import paho.mqtt.client as mqtt
+import os
+from dotenv import load_dotenv
 
-# ========================
-# CONFIG
-# ========================
-MQTT_HOST = "192.168.1.70"
-MQTT_PORT = 1883
+load_dotenv()
+
+MQTT_HOST = os.getenv("MQTT_HOST", "localhost")
+MQTT_PORT = int(os.getenv("MQTT_PORT", "1883"))
 DEVICE_ID = "esp32-room-node"
 
 app = FastAPI(title="IoT Smart Gateway API")
 
-# Store device state in memory
+
 device_state = {
     DEVICE_ID: {
         "temperature": None,
@@ -20,9 +21,7 @@ device_state = {
     }
 }
 
-# ------------------------
-# MQTT Handlers
-# ------------------------
+
 def on_connect(client, userdata, flags, rc):
     print("MQTT connected:", rc)
     client.subscribe("home/esp32/temperature")
@@ -47,16 +46,12 @@ def mqtt_loop():
 
 threading.Thread(target=mqtt_loop, daemon=True).start()
 
-# ------------------------
-# API Models
-# ------------------------
+
 class Command(BaseModel):
     action: str
     value: str | None = None
 
-# ------------------------
-# API Routes
-# ------------------------
+
 @app.get("/devices")
 def list_devices():
     return device_state
