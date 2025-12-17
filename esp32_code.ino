@@ -2,10 +2,6 @@
 #include <PubSubClient.h>
 #include "secrets.h"
 
-
-const char* MQTT_HOST = "192.168.1.70";
-const int   MQTT_PORT = 1883;
-
 const char* DEVICE_ID = "esp32-room-node";
 const int   LED_PIN   = 2;
 
