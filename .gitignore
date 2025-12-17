@@ -1,4 +1,10 @@
-# Python
+
+.env
+*.env
+backend/.env
+firmware/**/secrets.h
+
+
 .venv/
 __pycache__/
 *.pyc
@@ -7,25 +13,24 @@ __pycache__/
 .Python
 env/
 venv/
+*.egg-info/
+dist/
+build/
 
-# Environment variables
-.env
-*.env
 
-# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# OS
+
 .DS_Store
 Thumbs.db
 
-# Node
+
 node_modules/
 
-# Arduino build files
+
 *.hex
 *.elf
 *.bin
