@@ -17,6 +17,8 @@ app = FastAPI(title="IoT Smart Gateway API")
 device_state = {
     DEVICE_ID: {
         "temperature": None,
+        "temperatureF": None,
+        "humidity": None,
         "status": "unknown"
     }
 }
@@ -25,6 +27,8 @@ device_state = {
 def on_connect(client, userdata, flags, rc):
     print("MQTT connected:", rc)
     client.subscribe("home/esp32/temperature")
+    client.subscribe("home/esp32/temperatureF")
+    client.subscribe("home/esp32/humidity")
     client.subscribe("home/esp32/status")
 
 def on_message(client, userdata, msg):
@@ -32,7 +36,11 @@ def on_message(client, userdata, msg):
     print("MQTT >", msg.topic, payload)
 
     if msg.topic == "home/esp32/temperature":
-        device_state[DEVICE_ID]["temperature"] = int(payload)
+        device_state[DEVICE_ID]["temperature"] = float(payload)
+    elif msg.topic == "home/esp32/temperatureF":
+        device_state[DEVICE_ID]["temperatureF"] = float(payload)
+    elif msg.topic == "home/esp32/humidity":
+        device_state[DEVICE_ID]["humidity"] = float(payload)
     elif msg.topic == "home/esp32/status":
         device_state[DEVICE_ID]["status"] = payload
 
