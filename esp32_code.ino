@@ -1,13 +1,21 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include "secrets.h"
+#include <DHT22.h>
+#define DHT_PIN 4
+
+
 
 const char* DEVICE_ID = "esp32-room-node";
 const int   LED_PIN   = 2;
 
+
+
 WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
+DHT22 dht22(DHT_PIN);
 unsigned long lastPublish = 0;
+
 
 
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
@@ -64,6 +72,9 @@ void setup() {
   Serial.begin(115200);
   delay(1000);
 
+
+  Serial.println("[DHT22] Sensor initialized");
+
   connectWiFi();
   mqttClient.setServer(MQTT_HOST, MQTT_PORT);
   mqttClient.setCallback(mqttCallback);
@@ -77,11 +88,36 @@ void loop() {
   unsigned long now = millis();
   if (now - lastPublish > 5000) {
     lastPublish = now;
+  float temperature = dht22.getTemperature();
+  float temperatureF = (temperature * 1.8) + 32.0;
+  float humidity = dht22.getHumidity();
+  if (dht22.getLastError() != dht22.OK) {
+    Serial.print("last error: ");
+    Serial.println(dht22.getLastError());
+  }
 
-    int fakeTemp = random(60, 81);
-    char buf[8];
-    snprintf(buf, sizeof(buf), "%d", fakeTemp);
+Serial.print("Temp: ");
+Serial.print(temperature);
+Serial.println("°C");
 
-    mqttClient.publish("home/esp32/temperature", buf);
+Serial.print("Temp: ");
+Serial.print(temperatureF);
+Serial.println("°F");
+
+Serial.print("Humidity: ");
+Serial.print(humidity);
+Serial.println("%");
+
+  char tempBuf[8];
+  char humBuf[8];
+  char tempFBuf[8];
+  snprintf(tempFBuf, sizeof(tempFBuf), "%.1f", temperatureF);
+  snprintf(tempBuf, sizeof(tempBuf), "%.1f", temperature);
+  snprintf(humBuf, sizeof(humBuf), "%.1f", humidity);
+  
+  mqttClient.publish("home/esp32/temperature", tempBuf);
+  mqttClient.publish("home/esp32/humidity", humBuf);
+  mqttClient.publish("home/esp32/temperatureF", tempFBuf);
+  
   }
 }
